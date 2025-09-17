@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create(\App\Enums\DBTables::PROPERTY_IMAGES->value, static function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('property_id')->constrained(\App\Enums\DBTables::PROPERTIES->value)->cascadeOnDelete();
+            $table->foreignId('image_id')->constrained(\App\Enums\DBTables::IMAGES->value)->cascadeOnDelete();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists(\App\Enums\DBTables::PROPERTY_IMAGES->value);
+    }
+};
