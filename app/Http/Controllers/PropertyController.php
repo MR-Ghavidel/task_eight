@@ -48,7 +48,7 @@ class PropertyController extends Controller
         $propertyFeature = $this->propertyFeatureRepository->getAllByIds($propertyIds);
 
         $properties = collect($properties)->each(function ($property) use ($propertyFeature) {
-            $property->features = collect($propertyFeature)->where('property_id', $property->id)->all();
+            $property->features = collect($propertyFeature)->where('property_id', $property->id)->values()->toArray();
         });
 
         return ShowPropertyResource::collection($properties);
