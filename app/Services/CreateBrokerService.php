@@ -4,28 +4,34 @@ namespace App\Services;
 
 
 use App\Repository\General\Interface\BrokerRepositoryInterface;
-use App\Repository\Tenant\Interface\BrokerCommentRepositoryInterface;
-use App\Repository\Tenant\Interface\BrokerPropertyRepositoryInterface;
-use App\Repository\Tenant\Interface\BrokerReactionRepositoryInterface;
+use App\TenantTablesGenerator;
+use App\Validators\BrokerTablesExistValidator;
 
 class CreateBrokerService
 {
     public function __construct(
         private readonly BrokerRepositoryInterface $brokerRepository,
-        private readonly BrokerPropertyRepositoryInterface  $brokerPropertyRepository,
-        private readonly BrokerCommentRepositoryInterface $brokerCommentRepository,
-        private readonly BrokerReactionRepositoryInterface $brokerReactionRepository
+        private readonly TenantTablesGenerator     $tenantTablesGenerator,
     )
     {
     }
 
-    public function createBrokerWithTables(array $data)
+    public function createBrokerWithTables(array $data): array
     {
-        //dd($data);
         $brokerId = $this->brokerRepository->create($data);
-        $this->brokerPropertyRepository->createSchemaByBrokerId($brokerId);
-        $this->brokerCommentRepository->createSchemaByBrokerId($brokerId);
-        $this->brokerReactionRepository->createSchemaByBrokerId($brokerId);
-        return $brokerId;
+
+        $this->tenantTablesGenerator->createPropertyTableByBrokerId($brokerId);
+
+        $this->tenantTablesGenerator->createPropertyViewTableByBrokerId($brokerId);
+
+        $this->tenantTablesGenerator->createCommandTableByBrokerId($brokerId);
+
+        $this->tenantTablesGenerator->createReactionTableByBrokerId($brokerId);
+
+        (new BrokerTablesExistValidator())->validate(brokerId: $brokerId);
+
+        return ['broker_id' => $brokerId];
     }
+
+
 }

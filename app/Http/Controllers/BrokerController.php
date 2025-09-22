@@ -2,23 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateBrokerRequest;
+use App\Http\Resources\BrokerPropertyDetailsResource;
 use App\Services\CreateBrokerService;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
+use App\Services\ShowBrokerPropertyDetailService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Symfony\Component\HttpFoundation\Response;
 
 class BrokerController extends Controller
 {
     public function __construct(
-        private readonly CreateBrokerService $createBrokerService,
+        private readonly CreateBrokerService             $createBrokerService,
+        private readonly ShowBrokerPropertyDetailService $showBrokerPropertyDetailService
     )
     {
     }
 
-    public function create(Request $request)
+    public function create(CreateBrokerRequest $request): JsonResponse
     {
-        $validated = $request->all();
+        return response()->json($this->createBrokerService->createBrokerWithTables($request->validated()), Response::HTTP_CREATED);
+    }
 
-        return $this->createBrokerService->createBrokerWithTables($validated);
+    public function getPropertyDetailById(int $brokerId, int $propertyId): BrokerPropertyDetailsResource
+    {
+        return new BrokerPropertyDetailsResource(
+            $this->showBrokerPropertyDetailService->getPropertyDetailById(brokerId: $brokerId, propertyId: $propertyId)
+        );
+    }
+
+    public function getAllPropertiesDetailsByBrokerId(int $brokerId, int $perPage, int $page): AnonymousResourceCollection
+    {
+        return BrokerPropertyDetailsResource::collection($this->showBrokerPropertyDetailService->getAllPropertiesDetailByBrokerId(
+            brokerId: $brokerId,
+            perPage: $perPage,
+            page: $page
+        ));
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
 use App\Enums\DBTables;
+use App\Enums\PropertySaleTypes;
+use App\Enums\PropertyStatus;
+use App\Enums\PropertyTypes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,9 +22,9 @@ return new class extends Migration
             $table->text('description');
             $table->unsignedMediumInteger('area'); //16,777,215
             $table->unsignedBigInteger('price');
-            $table->enum('sale_type', ['sale', 'mortgage', 'rent'])->default('sale');
-            $table->enum('type', ['villa', 'apartment'])->default('apartment');
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('sale_type', PropertySaleTypes::cases())->default(PropertySaleTypes::SALE->value);
+            $table->enum('type', PropertyTypes::cases())->default(PropertyTypes::APARTMENT->value);
+            $table->enum('status', PropertyStatus::cases())->default(PropertyStatus::ACTIVE->value);
             $table->string('city');
             $table->string('street');
             $table->float('latitude');
