@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChangeProperyStatusRequest;
 use App\Http\Requests\CreatePropertyRequest;
 use App\Http\Resources\ShowPropertyResource;
-use App\Repository\General\PropertyRepository;
+use App\Repository\General\Interface\PropertyRepositoryInterface;
+use App\Repository\General\PropertyFeatureRepository;
 use App\Services\ChangePropertyStatusService;
 use App\Services\CreatePropertyService;
 use App\Services\ViewPropertyService;
@@ -18,8 +19,9 @@ class PropertyController extends Controller
     public function __construct(
         private readonly CreatePropertyService       $createPropertyService,
         private readonly ViewPropertyService         $viewPropertyService,
-        private readonly PropertyRepository          $propertyRepository,
-        private readonly ChangePropertyStatusService $changePropertyStatusService
+        private readonly PropertyRepositoryInterface $propertyRepository,
+        private readonly ChangePropertyStatusService $changePropertyStatusService,
+        private readonly PropertyFeatureRepository   $propertyFeatureRepository,
     )
     {
     }
@@ -39,7 +41,17 @@ class PropertyController extends Controller
 
     public function getAll(int $perPage, int $page): AnonymousResourceCollection
     {
-        return ShowPropertyResource::collection($this->propertyRepository->getAll(perPage: $perPage, page: $page));
+        $properties = $this->propertyRepository->getAll(perPage: $perPage, page: $page);
+
+        $propertyIds = collect($properties)->pluck('id')->toArray();
+
+        $propertyFeature = $this->propertyFeatureRepository->getAllByIds($propertyIds);
+
+        $properties = collect($properties)->each(function ($property) use ($propertyFeature) {
+            $property->features = collect($propertyFeature)->where('property_id', $property->id)->all();
+        });
+
+        return ShowPropertyResource::collection($properties);
     }
 
     /**

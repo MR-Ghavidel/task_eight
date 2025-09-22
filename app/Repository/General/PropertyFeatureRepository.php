@@ -23,4 +23,9 @@ class PropertyFeatureRepository extends BaseRepository implements PropertyFeatur
             ->get()
             ->toArray();
     }
+
+    public function getAllByIds(array $ids): array
+    {
+        return $this->query()->whereIn('property_id', $ids)->get()->toArray();
+    }
 }

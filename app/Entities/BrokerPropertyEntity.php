@@ -14,4 +14,6 @@ class BrokerPropertyEntity
     public int|null $likeCount;
     public int|null $dislikeCount;
 
+    public int|null $lastPage;
+
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBrokerRequest;
 use App\Http\Resources\BrokerPropertyDetailsResource;
+use App\Http\Resources\BrokerPropertyDetailsResourceCollection;
 use App\Services\CreateBrokerService;
 use App\Services\ShowBrokerPropertyDetailService;
 use Illuminate\Http\JsonResponse;
@@ -31,9 +32,10 @@ class BrokerController extends Controller
         );
     }
 
-    public function getAllPropertiesDetailsByBrokerId(int $brokerId, int $perPage, int $page): AnonymousResourceCollection
+    public function getAllPropertiesDetailsByBrokerId(int $brokerId, int $perPage, int $page)
+    : BrokerPropertyDetailsResourceCollection
     {
-        return BrokerPropertyDetailsResource::collection($this->showBrokerPropertyDetailService->getAllPropertiesDetailByBrokerId(
+        return new BrokerPropertyDetailsResourceCollection($this->showBrokerPropertyDetailService->getAllPropertiesDetailByBrokerId(
             brokerId: $brokerId,
             perPage: $perPage,
             page: $page

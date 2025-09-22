@@ -12,7 +12,8 @@ class BaseRepository
 
     public function __construct()
     {
-        $this->connectionType = DB::connection()->getConfig()['driver'];
+        $this->connectionType = DB::connection()->getDriverName();
+        //dd(DB::connection()->getDriverName());
     }
 
     public function query(): Builder
@@ -23,14 +24,14 @@ class BaseRepository
     public function createdAt(): array
     {
         return [
-            'created_at' => date("Y-m-d h:i:s"),
+            'created_at' => now(),
         ];
     }
 
     public function updatedAt(): array
     {
         return [
-            'updated_at' => date("Y-m-d h:i:s")
+            'updated_at' => now(),
         ];
     }
 }

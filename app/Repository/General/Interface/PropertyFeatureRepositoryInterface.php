@@ -8,4 +8,6 @@ interface PropertyFeatureRepositoryInterface
 
     public function getByPropertyId(int $propertyId): array;
 
+    public function getAllByIds(array $ids): array;
+
 }

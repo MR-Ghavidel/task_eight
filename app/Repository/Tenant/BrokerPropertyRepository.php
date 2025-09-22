@@ -41,18 +41,23 @@ class BrokerPropertyRepository extends TenantBaseRepository implements BrokerPro
         $property->title = $data->property_title;
         $property->description = $data->property_description;
         $property->status = $data->status;
+        $property->lastPage = $data->last_page ?? null;
 
         return $property;
     }
 
     public function getAllPropertiesByBrokerId(int $brokerId, int $perPage, int $page): array
     {
-        $properties = $this->query($brokerId)->select()->paginate(perPage: $perPage, page: $page);
+        $properties = $this->query($brokerId)->paginate(perPage: $perPage, page: $page);
 
         $propertiesEntity = [];
 
         foreach ($properties as $property) {
             $propertiesEntity[] = $this->toEntity($property);
+        }
+
+        foreach ($propertiesEntity as $property) {
+            $property->lastPage = $properties->lastPage();
         }
 
         return $propertiesEntity;
