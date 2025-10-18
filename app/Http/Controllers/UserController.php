@@ -12,10 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 class UserController extends Controller
 {
     public function __construct(
-        private UserRepositoryInterface $userRepository,
-    )
-    {
-    }
+        private readonly UserRepositoryInterface $userRepository,
+    ) {}
 
     public function create(CreateUserRequest $request): JsonResponse
     {
@@ -26,9 +24,8 @@ class UserController extends Controller
     {
         $user = $this->userRepository->findById($id);
 
-        (new UserExistValidator())->validate(user: $user);
+        (new UserExistValidator)->validate(user: $user);
 
         return new ShowUserResource($user);
     }
-
 }
