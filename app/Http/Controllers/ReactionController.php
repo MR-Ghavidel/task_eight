@@ -11,14 +11,10 @@ class ReactionController extends Controller
 {
     public function __construct(
         private readonly ReactionPropertyService $reactionPropertyService,
-    )
-    {
-    }
+    ) {}
 
     public function likeProperty(LikeReactionRequest $request): JsonResponse
     {
-        return response()->json($this->reactionPropertyService->likeProperty($request->validated()))
-            ->setStatusCode(Response::HTTP_CREATED);
+        return response()->json($this->reactionPropertyService->likeProperty($request->validated()), Response::HTTP_CREATED);
     }
-
 }

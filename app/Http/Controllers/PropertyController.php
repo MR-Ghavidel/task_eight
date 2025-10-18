@@ -17,18 +17,13 @@ use Symfony\Component\HttpFoundation\Response;
 class PropertyController extends Controller
 {
     public function __construct(
-        private readonly CreatePropertyService       $createPropertyService,
-        private readonly ViewPropertyService         $viewPropertyService,
+        private readonly CreatePropertyService $createPropertyService,
+        private readonly ViewPropertyService $viewPropertyService,
         private readonly PropertyRepositoryInterface $propertyRepository,
         private readonly ChangePropertyStatusService $changePropertyStatusService,
-        private readonly PropertyFeatureRepository   $propertyFeatureRepository,
-    )
-    {
-    }
+        private readonly PropertyFeatureRepository $propertyFeatureRepository,
+    ) {}
 
-    /**
-     * @throws \Throwable
-     */
     public function create(CreatePropertyRequest $request): JsonResponse
     {
         return response()->json($this->createPropertyService->createProperty($request->validated()), Response::HTTP_CREATED);
@@ -54,9 +49,6 @@ class PropertyController extends Controller
         return ShowPropertyResource::collection($properties);
     }
 
-    /**
-     * @throws \Throwable
-     */
     public function changeStatus(ChangeProperyStatusRequest $request): JsonResponse
     {
         return response()->json($this->changePropertyStatusService->changePropertyStatus($request->validated()));

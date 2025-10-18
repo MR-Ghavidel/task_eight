@@ -8,17 +8,14 @@ use App\Http\Resources\BrokerPropertyDetailsResourceCollection;
 use App\Services\CreateBrokerService;
 use App\Services\ShowBrokerPropertyDetailService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class BrokerController extends Controller
 {
     public function __construct(
-        private readonly CreateBrokerService             $createBrokerService,
+        private readonly CreateBrokerService $createBrokerService,
         private readonly ShowBrokerPropertyDetailService $showBrokerPropertyDetailService
-    )
-    {
-    }
+    ) {}
 
     public function create(CreateBrokerRequest $request): JsonResponse
     {
@@ -32,13 +29,14 @@ class BrokerController extends Controller
         );
     }
 
-    public function getAllPropertiesDetailsByBrokerId(int $brokerId, int $perPage, int $page)
-    : BrokerPropertyDetailsResourceCollection
+    public function getAllPropertiesDetailsByBrokerId(int $brokerId, int $perPage, int $page): BrokerPropertyDetailsResourceCollection
     {
-        return new BrokerPropertyDetailsResourceCollection($this->showBrokerPropertyDetailService->getAllPropertiesDetailByBrokerId(
-            brokerId: $brokerId,
-            perPage: $perPage,
-            page: $page
-        ));
+        return new BrokerPropertyDetailsResourceCollection(
+            $this->showBrokerPropertyDetailService->getAllPropertiesDetailByBrokerId(
+                brokerId: $brokerId,
+                perPage: $perPage,
+                page: $page
+            )
+        );
     }
 }
